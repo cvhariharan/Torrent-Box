@@ -1,20 +1,33 @@
 import queue, os
 
 def torrent_downloader():
-	for file in torrent_files:
-		if file.endswith(".torrent"):
-			q.put(from_dir+file)
+	torrent_files = os.listdir(from_dir)
+	if torrent_files:
+		for file in torrent_files:
+			if file.endswith(".torrent"):
+				q.put(file)
+	else:
+		return
 
 	while not q.empty():
 		x = q.get()
-		print(x)
-		command = "aria2c -T " + x
+		#print(x)
+
+		command = "aria2c --max-upload-limit=2K --seed-time=0 --enable-peer-exchange=true -T " + from_dir + x
 		command = command + " -d /media/pi/UUI/Downloaded"
 		os.system(command)
-		os.remove(from_dir+x)
+		aria_files = os.listdir("/media/pi/UUI/Downloaded")
+		for file in aria_files:
+			if file.endswith(".aria2"):
+				flag = 1
+			else:
+				flag = 0
+		if flag == 0:   #To see if the file is downloaded check if aria file exists which is deleted once the download is complete
+			os.remove(from_dir+x)   
+			print("Deleted "+from_dir+x)
 
 from_dir = "/media/pi/UUI/Torrent/"
-torrent_files = os.listdir(from_dir)
+
 q = queue.Queue()
 while True:
 	torrent_downloader()
