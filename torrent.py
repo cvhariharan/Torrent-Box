@@ -13,7 +13,7 @@ def torrent_downloader():
 		x = q.get()
 		#print(x)
 
-		command = "aria2c --max-upload-limit=2K --seed-time=0 --enable-peer-exchange=true -T " + from_dir + x
+		command = "aria2c --max-upload-limit=20K --seed-ratio=0.097 --enable-peer-exchange=true --file-allocation=none -T " + from_dir + x
 		command = command + " -d /media/pi/UUI/Downloaded"
 		os.system(command)
 		aria_files = os.listdir("/media/pi/UUI/Downloaded")
